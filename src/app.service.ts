@@ -5,9 +5,23 @@ import { DbService } from './db/db.service';
 export class AppService {
   constructor(private db: DbService) {}
 
-  getHello() {
+  async getHello() {
     try {
-      const user = this.db.user.findMany();
+      // Buscar el usuario por defecto
+      let user = await this.db.user.findFirst({
+        where: { name: 'Usuario por defecto' },
+      });
+
+      // Si el usuario por defecto no existe, crearlo
+      if (!user) {
+        user = await this.db.user.create({
+          data: {
+            name: 'Usuario por defecto',
+            // Agrega aquí otros campos necesarios
+          },
+        });
+      }
+
       return user;
     } catch (err) {
       return err;
